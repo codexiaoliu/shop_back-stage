@@ -12,7 +12,16 @@ import './assets/fonts/iconfont.css'
 // 导入 axios
 import axios from 'axios'
 
+
 axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
+// 这里是axios的请求拦截器 
+// 用来给请求头的Authorization属性添加token  作为后续请求接口的权限
+// 但是注意只有登录以后服务器才会发送给浏览器一个token 并且保存在sessionStorage中 作为后续获取数据的令牌
+axios.interceptors.request.use(config => {
+  config.headers.Authorization = window.sessionStorage.getItem('token')
+  return config
+})
+
 Vue.prototype.$axios = axios
 
 Vue.config.productionTip = false
