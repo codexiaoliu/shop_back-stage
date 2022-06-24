@@ -29,6 +29,16 @@ const routes = [{
         name: 'User',
         component: () => import('views/home/childrens/User.vue')
       },
+      {
+        path: '/roles',
+        name: 'Roles',
+        component: () => import('views/home/childrens/Roles.vue')
+      },
+      {
+        path: '/rights',
+        name: 'Rights',
+        component: () => import('views/home/childrens/Rights.vue')
+      },
     ]
   },
 

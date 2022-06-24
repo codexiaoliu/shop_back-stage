@@ -93,7 +93,7 @@ export default {
     async getMenuDate() {
       const { data: res } = await this.$axios.get("menus");
       this.menuData = res.data;
-      console.log(this.menuData);
+      // console.log(this.menuData);
     },
   },
   created() {

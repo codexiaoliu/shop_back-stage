@@ -32,6 +32,7 @@
 
       <!-- 用户数据表格区域 -->
       <el-table :data="usersList" style="width: 100%" stripe border>
+        <el-table-column type="index"></el-table-column>
         <el-table-column prop="username" label="姓名" width="180">
         </el-table-column>
         <el-table-column prop="email" label="邮箱" width="180">
@@ -76,6 +77,7 @@
                 type="warning"
                 icon="el-icon-s-tools"
                 size="mini"
+                @click="openAssignRolesForm(scope.row)"
               ></el-button>
             </el-tooltip>
           </template>
@@ -163,6 +165,31 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="quitEditUser">取 消</el-button>
         <el-button type="primary" @click="putEditUser">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 分配角色对话框 -->
+    <el-dialog
+      title="分配角色"
+      :visible.sync="isAssignRolesFormVisible"
+      width="50%"
+      @close="closeAssignRolesForm"
+    >
+      <div>用户名：{{ userInfo.username }}</div>
+      <div>当前角色:{{ userInfo.role_name }}</div>
+
+      <el-select v-model="newRole" placeholder="请选择">
+        <el-option
+          v-for="item in rolesList"
+          :key="item.id"
+          :label="item.roleName"
+          :value="item.id"
+        >
+        </el-option>
+      </el-select>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="isAssignRolesFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="putAssignRoles">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -258,6 +285,11 @@ export default {
         password: [{ validator: validatePass, trigger: "blur" }],
         checkPass: [{ validator: validatePass2, trigger: "blur" }],
       },
+      isAssignRolesFormVisible: false,
+      // 用户信息
+      userInfo: {},
+      rolesList: [],
+      newRole: "",
     };
   },
   methods: {
@@ -269,7 +301,7 @@ export default {
       if (res.meta.status !== 200) return this.$message.error("数据请求失败");
       this.usersList = res.data.users;
       this.total = res.data.total;
-      console.log(this.usersList);
+      // console.log(this.usersList);
     },
     // 监听修改用户状态
     async changeStatus(usersdata) {
@@ -365,7 +397,7 @@ export default {
     // 监听删除用户按钮
     async deleteUser(id) {
       const result = await this.$confirm(
-        "此操作将永久删除该文件, 是否继续?",
+        "此操作将永久删除该用户, 是否继续?",
         "提示",
         {
           confirmButtonText: "确定",
@@ -381,6 +413,41 @@ export default {
       if (datares.meta.status != 200) this.$message.error("删除失败");
       this.$message.success("删除成功");
       this.getUsersList();
+    },
+
+    // 监听打开分配角色对话框
+    async openAssignRolesForm(user) {
+      // console.log(user);
+      this.userInfo = user;
+      const { data: res } = await this.$axios.get("roles");
+      // console.log(res);
+      if (res.meta.status !== 200)
+        return this.$message.error("获取角色数据失败");
+      this.rolesList = res.data;
+      // console.log(this.rolesList);
+      this.isAssignRolesFormVisible = true;
+    },
+
+    // 关闭分配角色对话框
+    closeAssignRolesForm() {
+      this.newRole = "";
+    },
+
+    // 确定分配角色
+    async putAssignRoles() {
+      const { data: res } = await this.$axios.put(
+        `users/${this.userInfo.id}/role`,
+        {
+          rid: this.newRole,
+        }
+      );
+      if (res.meta.status !== 200) {
+        return this.$message.error("分配角色失败");
+      }
+      this.$message.success("分配角色成功");
+
+      this.getUsersList();
+      this.isAssignRolesFormVisible = false;
     },
   },
   created() {
