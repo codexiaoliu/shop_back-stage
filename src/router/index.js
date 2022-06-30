@@ -49,6 +49,16 @@ const routes = [{
         name: 'Params',
         component: () => import('views/home/shop/Params.vue')
       },
+      {
+        path: '/goods',
+        name: 'Goods',
+        component: () => import('views/home/shop/Goods.vue')
+      },
+      {
+        path: '/addGoods',
+        name: 'AddGoods',
+        component: () => import('views/home/shop/AddGoods.vue')
+      },
     ]
   },
 
