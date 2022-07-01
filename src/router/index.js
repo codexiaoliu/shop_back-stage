@@ -60,13 +60,14 @@ const routes = [{
         component: () => import('views/home/shop/AddGoods.vue')
       },
       {
-
         path: '/orders',
         name: 'Orders',
         component: () => import('views/home/orders/Orders.vue')
-
-
-
+      },
+      {
+        path: '/reports',
+        name: 'Reports',
+        component: () => import('views/home/reports/Reports.vue')
       },
     ]
   },
